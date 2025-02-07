@@ -71,6 +71,19 @@ let x = 42.5
 - Project milestones and achievements
 - Example scripts demonstrating language features
 
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+### Licensing Highlights
+- Open-source and free to use
+- Permissive licensing
+- Allows commercial use
+- Minimal restrictions on modification and distribution
+
+## Contributing
+We welcome contributions! Please see our contribution guidelines for more information.
+
 ## Building the Project
 
 ### Prerequisites
