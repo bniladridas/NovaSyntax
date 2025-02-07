@@ -1,32 +1,50 @@
-# NovaSyntax
+> **NovaSyntax** is intended to be a full-fledged programming language, similar to C, Python, or other general-purpose programming languages. However, it's currently in a very early stage of development.
 
-## Project Overview
+### Similarities to C and Python
+- Supports function declarations
+- Has variable declarations
+- Supports basic arithmetic operations
+- Uses curly braces `{}` for code blocks
+- Designed to be a compiled or interpreted language
 
-NovaSyntax is a custom programming language implementation project, currently in its early stages of development. The key aspects of the project are:
+### Relationship to C++
+#### Similarities to C++
+- Uses curly braces `{}` to define code blocks
+- Supports function declarations
+- Uses static typing (implied by the current implementation)
+- Uses `return` statement
+- Appears to have a compiled language approach
+- Being implemented in C++
 
-### Language Design
-- A new programming language being developed from scratch
-- Appears to have syntax similar to modern scripting languages
-- Supports basic language constructs like:
-  - Function declarations (`func`)
-  - Variable declarations (`let`)
-  - Return statements
-  - Basic arithmetic operations
+#### Differences from C++
+- Simpler syntax (more like a scripting language)
+- Uses `func` instead of C++'s function declaration style
+- Uses `let` for variable declaration (more like JavaScript/Rust)
+- Likely to have a simpler type system
+- Currently much less feature-complete
+- No explicit type annotations shown in current examples
+- No object-oriented programming features yet
+- No templates or generic programming
+- No explicit memory management keywords
 
-### Current Focus
-- Lexical Analysis (Tokenization)
-- Building a robust lexer that can correctly parse and tokenize source code
-- Implementing a token system that captures different language elements
+### Unique Characteristics
+- Has its own custom syntax (e.g., `func` instead of `def` or no return type)
+- Currently only implementing the lexer (first stage of language implementation)
+- Will eventually need:
+  1. Parser
+  2. Compiler or Interpreter
+  3. Standard Library
+  4. Runtime Environment
 
-### Technical Implementation
-- Written in C++
-- Using Google Test framework for unit testing
-- Modular design with separate components for lexing
+### Current Stage
+Right now, NovaSyntax is more of a "language skeleton" - we're building the foundational components that will eventually allow it to be a fully functional programming language like C or Python.
 
-### Current Development Stage
-- Working on fundamental lexer functionality
-- Debugging token generation
-- Ensuring correct identification of language tokens
+### Language Development Process
+The project is essentially creating a new programming language from scratch, which involves:
+- Defining the language syntax
+- Creating a lexer to break down code into tokens
+- Developing a parser to understand code structure
+- Implementing compilation or interpretation mechanisms
 
 ### Example Syntax
 ```novasyntax
@@ -34,8 +52,6 @@ func add(x, y) { return x + y }
 let message = "Hello, NovaSyntax!"
 let x = 42.5
 ```
-
-The project is currently focused on building the lexical analysis component, which is the first step in creating a programming language compiler or interpreter. The lexer breaks down the source code into a sequence of tokens that can be further processed by subsequent stages like parsing and compilation.
 
 ## Project Structure
 - `src/lexer/`: Lexer implementation
