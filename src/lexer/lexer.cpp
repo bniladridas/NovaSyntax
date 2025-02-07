@@ -10,8 +10,9 @@ Lexer::Lexer(const std::string& source)
 
 std::vector<Token> Lexer::tokenize() {
     std::vector<Token> tokens;
-    std::cout << "Source: '" << source << "'" << std::endl;
-    std::cout << "Source Length: " << source.length() << std::endl;
+    current = 0;
+    line = 1;
+    column = 1;
 
     while (!isAtEnd()) {
         skipWhitespace();
@@ -19,17 +20,14 @@ std::vector<Token> Lexer::tokenize() {
         if (isAtEnd()) break;
 
         char ch = peek();
-        std::cout << "Current Position: " << current 
-                  << ", Current Char: '" << ch 
-                  << "', Remaining Source: '" 
-                  << source.substr(current) << "'" << std::endl;
 
         switch (ch) {
-            case '(': 
-                tokens.push_back(createToken(TokenType::LPAREN)); 
-                advance(); 
-                // Explicitly capture the first identifier after LPAREN
+            case '(': {
+                tokens.push_back({TokenType::LPAREN, "(", line, column});
+                advance();
                 skipWhitespace();
+                
+                // Explicitly capture identifier after LPAREN
                 if (!isAtEnd() && (std::isalpha(peek()) || peek() == '_')) {
                     size_t start_id = current;
                     while (!isAtEnd() && (std::isalnum(peek()) || peek() == '_')) {
@@ -39,19 +37,21 @@ std::vector<Token> Lexer::tokenize() {
                     tokens.push_back({TokenType::IDENTIFIER, literal, line, static_cast<int>(column - literal.length())});
                 }
                 break;
-            case ')': tokens.push_back(createToken(TokenType::RPAREN)); advance(); break;
-            case '{': tokens.push_back(createToken(TokenType::LBRACE)); advance(); break;
-            case '}': tokens.push_back(createToken(TokenType::RBRACE)); advance(); break;
-            case '+': tokens.push_back(createToken(TokenType::PLUS)); advance(); break;
-            case '-': tokens.push_back(createToken(TokenType::MINUS)); advance(); break;
-            case '*': tokens.push_back(createToken(TokenType::MULTIPLY)); advance(); break;
-            case '/': tokens.push_back(createToken(TokenType::DIVIDE)); advance(); break;
-            case '=': tokens.push_back(createToken(TokenType::ASSIGN)); advance(); break;
-            case ',': 
-                tokens.push_back(createToken(TokenType::COMMA)); 
-                advance(); 
-                // Capture identifier after COMMA
+            }
+            case ')': tokens.push_back({TokenType::RPAREN, ")", line, column}); advance(); break;
+            case '{': tokens.push_back({TokenType::LBRACE, "{", line, column}); advance(); break;
+            case '}': tokens.push_back({TokenType::RBRACE, "}", line, column}); advance(); break;
+            case '+': tokens.push_back({TokenType::PLUS, "+", line, column}); advance(); break;
+            case '-': tokens.push_back({TokenType::MINUS, "-", line, column}); advance(); break;
+            case '*': tokens.push_back({TokenType::MULTIPLY, "*", line, column}); advance(); break;
+            case '/': tokens.push_back({TokenType::DIVIDE, "/", line, column}); advance(); break;
+            case '=': tokens.push_back({TokenType::ASSIGN, "=", line, column}); advance(); break;
+            case ',': {
+                tokens.push_back({TokenType::COMMA, ",", line, column});
+                advance();
                 skipWhitespace();
+                
+                // Explicitly capture identifier after COMMA
                 if (!isAtEnd() && (std::isalpha(peek()) || peek() == '_')) {
                     size_t start_id = current;
                     while (!isAtEnd() && (std::isalnum(peek()) || peek() == '_')) {
@@ -61,6 +61,7 @@ std::vector<Token> Lexer::tokenize() {
                     tokens.push_back({TokenType::IDENTIFIER, literal, line, static_cast<int>(column - literal.length())});
                 }
                 break;
+            }
 
             default:
                 if (std::isalpha(ch) || ch == '_') {
@@ -73,7 +74,6 @@ std::vector<Token> Lexer::tokenize() {
                     tokens.push_back(stringToken());
                 }
                 else {
-                    // Skip whitespace and unknown characters
                     skipWhitespace();
                     if (!isAtEnd()) {
                         advance(); // Ensure progress
@@ -83,7 +83,8 @@ std::vector<Token> Lexer::tokenize() {
     }
     
     // Always add EOF token at the end
-    tokens.push_back({TokenType::EOF_, "<EOF>", line, column});
+    tokens.push_back({TokenType::EOF_, "<EOF>", line, static_cast<int>(column + 1)});
+    
     return tokens;
 }
 
@@ -112,7 +113,7 @@ void Lexer::skipWhitespace() {
 }
 
 Token Lexer::createToken(TokenType type) {
-    Token token{type, std::string(1, advance()), line, column - 1};
+    Token token{type, std::string(1, advance()), line, static_cast<int>(column - 1)};
     return token;
 }
 
@@ -143,13 +144,69 @@ Token Lexer::identifierToken() {
 
 Token Lexer::numberToken() {
     size_t start = current;
+    bool hasExponent = false;
+
+    // Check for hex or binary literals
+    if (peek() == '0') {
+        advance(); // consume '0'
+        if (peek() == 'x' || peek() == 'X') {
+            advance(); // consume 'x'
+            // Validate hex digits
+            if (!std::isxdigit(peek())) {
+                throw std::runtime_error("Invalid hexadecimal literal");
+            }
+            while (!isAtEnd() && std::isxdigit(peek())) {
+                advance();
+            }
+            std::string literal = source.substr(start, current - start);
+            return {TokenType::NUMBER, literal, line, static_cast<int>(column - literal.length())};
+        } else if (peek() == 'b' || peek() == 'B') {
+            advance(); // consume 'b'
+            // Validate binary digits
+            if (peek() != '0' && peek() != '1') {
+                throw std::runtime_error("Invalid binary literal");
+            }
+            while (!isAtEnd() && (peek() == '0' || peek() == '1')) {
+                advance();
+            }
+            std::string literal = source.substr(start, current - start);
+            return {TokenType::NUMBER, literal, line, static_cast<int>(column - literal.length())};
+        } else {
+            // Revert back for decimal processing
+            current = start;
+        }
+    }
+
+    // Process digits for decimal numbers
+    // Integer part
     while (!isAtEnd() && std::isdigit(peek())) {
         advance();
     }
 
-    // Handle decimal point
-    if (peek() == '.' && !isAtEnd()) {
-        advance();
+    // Optional decimal part
+    if (peek() == '.' && !hasExponent) {
+        advance(); // decimal point
+        while (!isAtEnd() && std::isdigit(peek())) {
+            advance();
+        }
+    }
+
+    // Optional exponent
+    if ((peek() == 'e' || peek() == 'E') && !hasExponent) {
+        advance(); // exponent marker
+        hasExponent = true;
+
+        // Optional sign for exponent
+        if (peek() == '+' || peek() == '-') {
+            advance();
+        }
+
+        // Ensure at least one digit after exponent
+        if (!std::isdigit(peek())) {
+            throw std::runtime_error("Invalid exponent in number literal");
+        }
+
+        // Consume exponent digits
         while (!isAtEnd() && std::isdigit(peek())) {
             advance();
         }
