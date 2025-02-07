@@ -13,11 +13,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Install CMake
+      run: sudo apt-get update && sudo apt-get install -y cmake
     - name: configure
-      run: ./configure
+      run: ./configure.sh
     - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      run: cd build && make
+    - name: run tests
+      run: cd build && ./novasyntax_test
