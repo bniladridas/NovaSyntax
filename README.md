@@ -1,34 +1,40 @@
-# NovaSyntax Programming Language
+# NovaSyntax
 
-## Overview
-NovaSyntax is an innovative programming language designed to provide a modern, expressive, and powerful coding experience.
+## Test Results
 
-## Features (Planned)
-- Modern syntax
-- Strong type system
-- Multi-paradigm support
-- High performance
-- Memory safety
+### Lexer Test Outcomes
 
-## Project Structure
-- `src/`: Source code implementation
-- `include/`: Header files
-- `tests/`: Language test suite
+┌─────────────────────────────────────────────────────────────────┐
+│ Test Suite: LexerTest                                           │
+│ Total Tests: 3                                                 │
+│ Passed: 2                                                      │
+│ Failed: 1                                                      │
+│                                                                │
+│ Failed Test: BasicTokenization                                 │
+│ Failure Reason: Token count mismatch                           │
+│   - Expected: 14 tokens                                        │
+│   - Actual:   13 tokens                                        │
+│                                                                │
+│ Successful Tests:                                              │
+│ - StringTokenization                                           │
+│ - NumberTokenization                                           │
+└─────────────────────────────────────────────────────────────────┘
 
-## Build Requirements
-- C++20 compiler
-- CMake
-- LLVM (optional)
+**Detailed Test Breakdown:**
 
-## Getting Started
-(Detailed instructions will be added as the project progresses)
+1. **BasicTokenization Test**
+   - Input: `func add(x, y) { return x + y }`
+   - **Failed**: Expected 14 tokens, but only 13 tokens were generated
+   - Missing token is likely the first identifier `x`
 
-## Roadmap
-1. Lexer implementation
-2. Parser development
-3. Abstract Syntax Tree
-4. Interpreter/Compiler
-5. Standard Library
+2. **StringTokenization Test**
+   - Input: `let message = "Hello, NovaSyntax!"`
+   - **Passed**: Correctly tokenized string literal
 
-## Contributions
-Contributions are welcome! Please read our contribution guidelines before starting.
+3. **NumberTokenization Test**
+   - Input: `let x = 42.5`
+   - **Passed**: Correctly tokenized numeric literal
+
+**Next Steps:**
+- Investigate why the first `x` identifier is not being captured in the BasicTokenization test
+- Modify the lexer to ensure all identifiers are correctly tokenized

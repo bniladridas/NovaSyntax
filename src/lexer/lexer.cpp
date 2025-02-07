@@ -1,4 +1,5 @@
 #include "lexer.hpp"
+#include <iostream>
 #include <stdexcept>
 #include <cctype>
 
@@ -9,15 +10,35 @@ Lexer::Lexer(const std::string& source)
 
 std::vector<Token> Lexer::tokenize() {
     std::vector<Token> tokens;
+    std::cout << "Source: '" << source << "'" << std::endl;
+    std::cout << "Source Length: " << source.length() << std::endl;
 
     while (!isAtEnd()) {
         skipWhitespace();
-        
+        start = current;
         if (isAtEnd()) break;
 
         char ch = peek();
+        std::cout << "Current Position: " << current 
+                  << ", Current Char: '" << ch 
+                  << "', Remaining Source: '" 
+                  << source.substr(current) << "'" << std::endl;
+
         switch (ch) {
-            case '(': tokens.push_back(createToken(TokenType::LPAREN)); advance(); break;
+            case '(': 
+                tokens.push_back(createToken(TokenType::LPAREN)); 
+                advance(); 
+                // Explicitly capture the first identifier after LPAREN
+                skipWhitespace();
+                if (!isAtEnd() && (std::isalpha(peek()) || peek() == '_')) {
+                    size_t start_id = current;
+                    while (!isAtEnd() && (std::isalnum(peek()) || peek() == '_')) {
+                        advance();
+                    }
+                    std::string literal = source.substr(start_id, current - start_id);
+                    tokens.push_back({TokenType::IDENTIFIER, literal, line, static_cast<int>(column - literal.length())});
+                }
+                break;
             case ')': tokens.push_back(createToken(TokenType::RPAREN)); advance(); break;
             case '{': tokens.push_back(createToken(TokenType::LBRACE)); advance(); break;
             case '}': tokens.push_back(createToken(TokenType::RBRACE)); advance(); break;
@@ -26,23 +47,43 @@ std::vector<Token> Lexer::tokenize() {
             case '*': tokens.push_back(createToken(TokenType::MULTIPLY)); advance(); break;
             case '/': tokens.push_back(createToken(TokenType::DIVIDE)); advance(); break;
             case '=': tokens.push_back(createToken(TokenType::ASSIGN)); advance(); break;
-            case ',': tokens.push_back(createToken(TokenType::COMMA)); advance(); break;
-            
+            case ',': 
+                tokens.push_back(createToken(TokenType::COMMA)); 
+                advance(); 
+                // Capture identifier after COMMA
+                skipWhitespace();
+                if (!isAtEnd() && (std::isalpha(peek()) || peek() == '_')) {
+                    size_t start_id = current;
+                    while (!isAtEnd() && (std::isalnum(peek()) || peek() == '_')) {
+                        advance();
+                    }
+                    std::string literal = source.substr(start_id, current - start_id);
+                    tokens.push_back({TokenType::IDENTIFIER, literal, line, static_cast<int>(column - literal.length())});
+                }
+                break;
+
             default:
                 if (std::isalpha(ch) || ch == '_') {
                     tokens.push_back(identifierToken());
-                } else if (std::isdigit(ch)) {
+                }
+                else if (std::isdigit(ch)) {
                     tokens.push_back(numberToken());
-                } else if (ch == '"') {
+                }
+                else if (ch == '"') {
                     tokens.push_back(stringToken());
-                } else {
-                    // Skip unknown characters instead of throwing an error
-                    advance();
+                }
+                else {
+                    // Skip whitespace and unknown characters
+                    skipWhitespace();
+                    if (!isAtEnd()) {
+                        advance(); // Ensure progress
+                    }
                 }
         }
     }
-
-    tokens.push_back({TokenType::END_OF_FILE, "", line, column});
+    
+    // Always add EOF token at the end
+    tokens.push_back({TokenType::EOF_, "<EOF>", line, column});
     return tokens;
 }
 
@@ -80,16 +121,22 @@ Token Lexer::identifierToken() {
     while (!isAtEnd() && (std::isalnum(peek()) || peek() == '_')) {
         advance();
     }
-    
+
     std::string literal = source.substr(start, current - start);
     TokenType type = TokenType::IDENTIFIER;
 
     // Check for keywords
-    if (literal == "func") type = TokenType::FUNCTION;
-    else if (literal == "let") type = TokenType::LET;
-    else if (literal == "if") type = TokenType::IF;
-    else if (literal == "else") type = TokenType::ELSE;
-    else if (literal == "return") type = TokenType::RETURN;
+    if (literal == "func") {
+        type = TokenType::FUNCTION;
+    } else if (literal == "let") {
+        type = TokenType::LET;
+    } else if (literal == "if") {
+        type = TokenType::IF;
+    } else if (literal == "else") {
+        type = TokenType::ELSE;
+    } else if (literal == "return") {
+        type = TokenType::RETURN;
+    }
 
     return {type, literal, line, static_cast<int>(column - literal.length())};
 }

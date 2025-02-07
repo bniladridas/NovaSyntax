@@ -30,11 +30,12 @@ enum class TokenType {
     LPAREN,
     RPAREN,
     LBRACE,
+    RBRACKET, // New token type
     RBRACE,
     COMMA,  // New token type for ','
     
     // Special
-    END_OF_FILE
+    EOF_  // Rename to EOF_
 };
 
 struct Token {
@@ -52,6 +53,7 @@ public:
 private:
     std::string source;
     size_t current;
+    size_t start;
     int line;
     int column;
 
