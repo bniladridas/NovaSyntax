@@ -129,26 +129,22 @@ make
 
 ┌─────────────────────────────────────────────────────────────────┐
 │ Test Suite: LexerTest                                           │
-│ Total Tests: 3                                                 │
-│ Passed: 2                                                      │
-│ Failed: 1                                                      │
-│                                                                │
-│ Failed Test: BasicTokenization                                 │
-│ Failure Reason: Token count mismatch                           │
-│   - Expected: 14 tokens                                        │
-│   - Actual:   13 tokens                                        │
+│ Total Tests: 4                                                 │
+│ Passed: 4                                                      │
+│ Failed: 0                                                      │
 │                                                                │
 │ Successful Tests:                                              │
+│ - BasicTokenization                                            │
 │ - StringTokenization                                           │
 │ - NumberTokenization                                           │
+│ - ComplexTokenization                                          │
 └─────────────────────────────────────────────────────────────────┘
 
 **Detailed Test Breakdown:**
 
 1. **BasicTokenization Test**
    - Input: `func add(x, y) { return x + y }`
-   - **Failed**: Expected 14 tokens, but only 13 tokens were generated
-   - Missing token is likely the first identifier `x`
+   - **Passed**: Correctly tokenized function definition
 
 2. **StringTokenization Test**
    - Input: `let message = "Hello, NovaSyntax!"`
@@ -158,6 +154,15 @@ make
    - Input: `let x = 42.5`
    - **Passed**: Correctly tokenized numeric literal
 
-**Next Steps:**
-- Investigate why the first `x` identifier is not being captured in the BasicTokenization test
-- Modify the lexer to ensure all identifiers are correctly tokenized
+4. **ComplexTokenization Test**
+   - Input: `let x = 42.5e-2 + 0xAF + 0b1010`
+   - **Passed**: Correctly tokenized complex number formats
+     * Scientific notation (`42.5e-2`)
+     * Hexadecimal literal (`0xAF`)
+     * Binary literal (`0b1010`)
+
+**Recent Improvements:**
+- Enhanced lexer to support advanced number representations
+- Added robust parsing for scientific notation
+- Implemented tokenization of hexadecimal and binary literals
+- Expanded test coverage for complex token scenarios
