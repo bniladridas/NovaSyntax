@@ -1,0 +1,37 @@
+func calculate_complex_math(x, y) {
+    // Demonstrate scientific notation
+    let scientific_num = 42.5e-2
+    
+    // Demonstrate hexadecimal and binary literals
+    let hex_value = 0xAF
+    let binary_value = 0b1010
+
+    // Perform calculations with different number formats
+    let result = x + y * scientific_num
+    let hex_result = hex_value + binary_value
+
+    // String interpolation (future feature)
+    let message = "Calculation complete!"
+
+    // Return multiple values (future feature)
+    return {
+        primary_result: result,
+        hex_calculation: hex_result,
+        scientific_factor: scientific_num,
+        message: message
+    }
+}
+
+func main() {
+    let x = 10
+    let y = 20
+
+    // Call the complex calculation function
+    let output = calculate_complex_math(x, y)
+
+    // Print results (future feature)
+    print("Primary Result: ", output.primary_result)
+    print("Hex Calculation: ", output.hex_calculation)
+    print("Scientific Factor: ", output.scientific_factor)
+    print(output.message)
+}
