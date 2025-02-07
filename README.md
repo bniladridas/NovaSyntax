@@ -58,6 +58,19 @@ let x = 42.5
 - `include/`: Header files
 - `tests/`: Unit tests for lexer and other components
 
+## Documentation
+
+### Project Documentation
+- [Lexer Output Explanation](/docs/lexer_output_explanation.md)
+  * Detailed breakdown of lexer tokenization
+  * Token type mapping
+  * Insights into lexer implementation
+
+### Additional Resources
+- Comprehensive build instructions
+- Project milestones and achievements
+- Example scripts demonstrating language features
+
 ## Building the Project
 
 ### Prerequisites
