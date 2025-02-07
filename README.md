@@ -58,6 +58,44 @@ let x = 42.5
 - `include/`: Header files
 - `tests/`: Unit tests for lexer and other components
 
+## Building the Project
+
+### Prerequisites
+- CMake
+- C++ Compiler (e.g., Clang, GCC)
+
+### Configuration Script
+A `configure.sh` script is provided to simplify the CMake configuration process:
+
+```bash
+./configure.sh
+```
+
+This script does the following:
+- Checks if CMake is installed
+- Creates a `build` directory if it doesn't exist
+- Runs CMake configuration
+
+### Manual Configuration
+If you prefer manual configuration:
+```bash
+mkdir build
+cd build
+cmake ..
+```
+
+### Building the Project
+After configuration:
+```bash
+cd build
+make
+```
+
+### Running Tests
+```bash
+./novasyntax_test
+```
+
 ## Test Results
 
 ### Lexer Test Outcomes
