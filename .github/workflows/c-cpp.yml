@@ -8,13 +8,18 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Install CMake
-      run: sudo apt-get update && sudo apt-get install -y cmake
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake libgtest-dev
+        cd /usr/src/gtest
+        sudo cmake CMakeLists.txt
+        sudo make
+        sudo cp lib/libgtest.a lib/libgtest_main.a /usr/lib/
     - name: configure
       run: ./configure.sh
     - name: make
