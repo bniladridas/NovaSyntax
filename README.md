@@ -61,40 +61,67 @@ let x = 42.5
 ## Building the Project
 
 ### Prerequisites
-- CMake
-- C++ Compiler (e.g., Clang, GCC)
+- CMake (version 3.20 or higher)
+- C++ Compiler with C++20 support (GCC 10+, Clang 10+, MSVC 19.25+)
+- Google Test (will be downloaded automatically if not found)
 
-### Configuration Script
-A `configure.sh` script is provided to simplify the CMake configuration process:
+### Build Options
 
+#### Quick Build
 ```bash
-./configure.sh
+./configure.sh   # Configure the project
+cd build         # Enter build directory
+make             # Build the project
 ```
 
-This script does the following:
-- Checks if CMake is installed
-- Creates a `build` directory if it doesn't exist
-- Runs CMake configuration
+#### Comprehensive Build and Test
+```bash
+./build_and_test.sh
+```
+This script will:
+- Check system dependencies
+- Clean previous build artifacts
+- Configure the project
+- Build the project
+- Run all tests
 
-### Manual Configuration
-If you prefer manual configuration:
+### Manual Build Steps
+1. Create build directory
 ```bash
 mkdir build
 cd build
+```
+
+2. Configure with CMake
+```bash
 cmake ..
 ```
 
-### Building the Project
-After configuration:
+3. Build the project
 ```bash
-cd build
 make
 ```
 
-### Running Tests
+4. Run tests
 ```bash
 ./novasyntax_test
 ```
+
+### Build Configurations
+- **Debug Build**: 
+  ```bash
+  cmake -DCMAKE_BUILD_TYPE=Debug ..
+  ```
+- **Release Build**: 
+  ```bash
+  cmake -DCMAKE_BUILD_TYPE=Release ..
+  ```
+
+### Troubleshooting
+- Ensure all prerequisites are installed
+- Check that you have a compiler supporting C++20
+- If Google Test is not found, it will be automatically downloaded
+- For any build issues, please file an issue on GitHub
 
 ## Test Results
 
