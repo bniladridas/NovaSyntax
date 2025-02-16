@@ -78,3 +78,9 @@ Type: 15, Literal: {, Line: 2, Column: 31
 - Improve error handling for invalid tokens
 - Add more sophisticated token recognition
 - Support more complex language constructs
+
+### Improvements Planned for Main Branch
+- Enhance parser capabilities
+- Implement semantic analysis
+- Develop a robust standard library
+- Create language-specific development tools
