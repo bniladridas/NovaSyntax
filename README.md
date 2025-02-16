@@ -44,6 +44,7 @@
   * Simple expression parsing
 - **Abstract Syntax Tree (AST)**: Foundational structure defined
 - **Interpreter/Compiler**: Planned 
+- **Improvements**: Planned for the main branch
 
 ### Parser Capabilities
 - Recognize function declarations
